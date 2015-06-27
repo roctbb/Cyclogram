@@ -1,0 +1,184 @@
+﻿@model IEnumerable<Cyclo.Models.Event>
+@using Cyclo.Models
+@using System.Globalization;
+@{
+    ViewBag.Title = "Index";
+    DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+    Calendar cal = dfi.Calendar;
+    DateTime currentDate = ((DateTime)ViewBag.currentDate);
+    string[] colors = { "active", "success", "info", "warning", "danger", ""};
+    int colorIndex = 0;
+    bool newRow = false;
+    int count=0;
+}
+
+<h2 style="text-align:center;">Циклограмма работы Гимназии 1576</h2>
+
+<h3 style="text-align:center;"><a href="/Events/?m=@currentDate.AddMonths(-1).Month&&y=@currentDate.AddMonths(-1).Year"><span class="glyphicon glyphicon-arrow-left"></span></a>
+    &nbsp;@dfi.GetMonthName(currentDate.Month) @currentDate.Year&nbsp;
+    <a href="/Events/?m=@currentDate.AddMonths(1).Month&&y=@currentDate.AddMonths(1).Year"><span class="glyphicon glyphicon-arrow-right"></span></a>
+    </h3>
+
+<table class="table table-bordered">
+    <tbody>
+        @{ 
+            int lastId = -1;
+        }
+        @foreach (var item in ((List<SubCategory>)ViewBag.SubCategoryList))
+        {
+
+            if (lastId != item.parent.ID)
+            {
+                if (lastId != -1)
+                {
+                    colorIndex++;
+                }
+                lastId = item.parent.ID;
+                int parentId = item.parent.ID;
+                count = ((List<SubCategory>)ViewBag.SubCategoryList).Count(c => c.parent.ID == parentId);
+                newRow = true;
+
+            }
+            if (newRow)
+            {
+                <tr>
+                    <th></th>
+                    <th></th>
+                    @for (int i = 1; i <= ViewBag.weekNums; i++)
+                    {
+                        <th>@i неделя</th>
+                    }
+                </tr>
+            }
+               <tr class="@colors[colorIndex%6]">
+                @if (newRow)
+                {
+                    newRow = false;
+                    <th rowspan="@count" style="white-space: nowrap;" class="vertical">@item.parent.name</th>
+                }
+                
+                <th style="white-space: nowrap;" class="vertical sub">@item.name</th>
+                @for (int i = 1; i <= ViewBag.weekNums; i++)
+                {
+                    <td>
+                        <a name="row_@item.ID"></a>
+                        <ul class="list-group">
+                            @foreach (var Event in Model)
+                            {
+                                if (Event.subCategory.ID == item.ID && (cal.GetWeekOfYear(currentDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) + i - 1 >= cal.GetWeekOfYear(Event.startDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek)) &&
+                                    (cal.GetWeekOfYear(currentDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) + i - 1 <= cal.GetWeekOfYear(Event.endDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek)))
+                                {
+                                    <li class="list-group-item"><span class="badge"><a style="color: white;" href="/Events/Delete/@Event.ID?m=@currentDate.Month&y=@currentDate.Year&w=@i"><span class=" glyphicon glyphicon-trash"></span></a></span><a href="/Events/Details/@Event.ID?m=@currentDate.Month&y=@currentDate.Year&w=@i">@Event.name</a></li>
+                                }
+                            }
+                        </ul>
+                        <a class="btn btn-sm btn-primary" href="/Events/Create/?cat=@item.ID&m=@currentDate.Month&y=@currentDate.Year&w=@i"><span class="glyphicon glyphicon-plus"></span> Добавить</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+
+
+</table>
+<script>
+
+    function GetVerticalLayout() {
+        /* Параметры */
+        var fontFamily = "Arial"; /* задаем шрифт */
+        var fontSize = 14; /* задаем размер шрифта */
+
+
+        /* Собираем все ячейки */
+        var td = document.getElementsByTagName("th");
+
+        /* Находим ячейки с классом vertical и заменяем в них текст svg-изображением */
+        var objElement = document.createElement("div");
+
+        for (i = 0; i < td.length; i++) {
+            if (td[i].className.match(/vertical/i)) {
+                var text = td[i].innerHTML;
+                var h = td[i].clientHeight;
+                var w = td[i].clientWidth;
+
+                var obj = objElement.cloneNode(true);
+                var height = (h > w) ? h : w;
+                var type = "image/svg+xml";
+                var width = fontSize + 2;
+                var textContent = "<svg xmlns='http://www.w3.org/2000/svg'  version='1.1' width='20px' height='" + (height) + "px'><text x='0' y='" + fontSize + "' style='font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size:" + fontSize + "px; text-anchor:end' transform='rotate(-90)'>" + text + "</text></svg>";
+                td[i].innerHTML=textContent;
+            }
+        }
+        for (i = 0; i < td.length; i++) {
+            if (td[i].className.match(/sub/i)) {
+                td[i].firstChild.style.height = td[i].firstChild.firstChild.clientWidth + 20;
+            }
+        }
+    }
+    GetVerticalLayout();
+    $("#eventMenu").addClass("dropdown");
+    var data = '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Циклограмма <span class="caret"></span></a> \
+                        <ul class="dropdown-menu scrollable-menu">';
+    @{
+        lastId = -1;
+    }
+    @foreach (var item in ((List<SubCategory>)ViewBag.SubCategoryList))
+    {
+
+        if (lastId != item.parent.ID)
+        {
+            lastId = item.parent.ID;
+            int parentId = item.parent.ID;
+            newRow = true;
+
+        }
+
+        if (newRow)
+        {
+            newRow = false;
+            <text>
+            data += '<li role="separator" class="divider"></li>';
+            data += '<li class="dropdown-header">@item.parent.name</li>';
+            </text>
+        }
+        <text>
+        data += '<li><a href="#row_@item.ID">@item.name</li>'; </text>
+    }
+
+    data+='</ul>';
+    $("#eventMenu").html(data);
+</script>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.startDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.endDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.description)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.startDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.endDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.description)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

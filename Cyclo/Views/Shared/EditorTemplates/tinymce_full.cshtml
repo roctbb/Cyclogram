@@ -1,0 +1,38 @@
+﻿<script src="@Url.Content("~/Scripts/tinymce/tinymce.js")" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    (function(){ 
+
+        tinyMCE.init({
+
+            // General options
+            mode: "exact",
+            elements: "@ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty)",
+            height: "500",
+            width: "790",
+            verify_html : false,
+		    
+		    // Theme options
+		    
+
+		    // Example content CSS (should be your site CSS)
+		    //content_css : "css/content.css",
+            content_css : "@Url.Content("~/Scripts/tinymce/css/content.css")",
+            convert_urls : false,
+
+		    // Drop lists for link/image/media/template dialogs
+		    template_external_list_url : "lists/template_list.js",
+		    external_link_list_url : "lists/link_list.js",
+		    external_image_list_url : "lists/image_list.js",
+		    media_external_list_url : "lists/media_list.js",
+
+	    });
+
+    })();
+
+</script>
+
+@Html.TextArea(string.Empty, /* Name suffix */
+    ViewData.TemplateInfo.FormattedModelValue /* Initial value */
+)
