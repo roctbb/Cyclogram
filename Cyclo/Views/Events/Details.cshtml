@@ -4,12 +4,24 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
-
+<h2 align="center">@Html.DisplayFor(model => model.name)</h2>
+<p>&nbsp;</p>
 <div>
-    <h4>Event</h4>
-    <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.subCategory.parent.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.subCategory.parent.name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.subCategory.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.subCategory.name)
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.startDate)
         </dt>
@@ -26,17 +38,51 @@
             @Html.DisplayFor(model => model.endDate)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.description)
-        </dd>
-
     </dl>
+    <p>
+        @Html.ActionLink("Изменить информацию о событии", "Edit", new { id = Model.ID, m = ViewBag.month, y = ViewBag.year }, new {@class= "btn-sm btn btn-primary" })
+        @Html.ActionLink("Назад в списку событий", "Index", new { m=ViewBag.month, y=ViewBag.year}, new { @class = "btn btn-default btn-sm" })
+    </p>
+
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<h3 align="center">Подробное описание</h3>
+<p>&nbsp;</p>
+<div>
+@Html.DisplayFor(model => model.description)
+</div>
+<h3 align="center">Поставленные задачи</h3>
+<p>&nbsp;</p>
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Название</th>
+                <th>Срок</th>
+                <th>Испольнитель</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ 
+                int i = 1;
+            }
+            @foreach (var job in Model.Jobs)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@job.name</td>
+                    <td>@job.deadLine.Date</td>
+                    <td>@job.userID</td>
+                    <td>@job.status</td>
+                </tr> 
+                i=i+1;
+                
+            }
+        </tbody>
+    </table>
+    <a href="/Jobs/Create/?eid=@Model.ID&m=@ViewBag.month&y=@ViewBag.year" class="btn btn-primary">Добавить задачу</a>
+</div>
+<div>
+
+</div>

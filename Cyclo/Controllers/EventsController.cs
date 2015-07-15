@@ -34,13 +34,16 @@ namespace Cyclo.Controllers
         }
 
         // GET: Events/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int? m, int? y)
         {
+            ViewBag.month = m;
+            ViewBag.year = y;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.events.Find(id);
+            db.categories.Load();
+            Event @event = db.events.Include(e => e.subCategory).Include(e=>e.Jobs).Where(e => e.ID == id).First();
             if (@event == null)
             {
                 return HttpNotFound();
@@ -92,20 +95,23 @@ namespace Cyclo.Controllers
             {
                 db.events.Add(ev);
                 db.SaveChanges();
-                return RedirectToAction("Index", new {m=m, y=y });
+                return RedirectToAction("Details", new {id=ev.ID, m=m, y=y });
             }
 
             return View(@event);
         }
 
         // GET: Events/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? m, int? y, int? id)
         {
+            ViewBag.month = m;
+            ViewBag.year = y;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.events.Find(id);
+            db.categories.Load();
+            Event @event = db.events.Include(e => e.subCategory).Where(e=>e.ID==id).First();
             if (@event == null)
             {
                 return HttpNotFound();
@@ -118,13 +124,16 @@ namespace Cyclo.Controllers
         // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,startDate,endDate,description")] Event @event)
+        public ActionResult Edit(int m, int y, [Bind(Include = "ID,startDate,endDate,description,name")] Event @event)
         {
+            ViewBag.month = m;
+            ViewBag.year = y;
             if (ModelState.IsValid)
             {
                 db.Entry(@event).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
+                return RedirectToAction("Details", new { id=@event.ID, m=m,y=y});
             }
             return View(@event);
         }

@@ -36,8 +36,11 @@ namespace Cyclo.Controllers
         }
 
         // GET: Jobs/Create
-        public ActionResult Create()
+        public ActionResult Create(int eid, int m, int y)
         {
+            ViewBag.month = m;
+            ViewBag.year = y;
+            ViewBag.linkedEvent = db.events.Where(e => e.ID == eid).First();
             return View();
         }
 
@@ -46,13 +49,18 @@ namespace Cyclo.Controllers
         // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,description,report,userID")] Job job)
+        public ActionResult Create(int eid, int m, int y, [Bind(Include = "ID,deadLine,name,description,report,userID")] Job job)
         {
+            ViewBag.month = m;
+            ViewBag.year = y;
+            Event current = db.events.Include(e=>e.Jobs).Where(e => e.ID == eid).First();
+            ViewBag.linkedEvent = current;
             if (ModelState.IsValid)
             {
                 db.Jobs.Add(job);
+                current.Jobs.Add(job);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Events", new {id=eid, m=m, y=y });
             }
 
             return View(job);
@@ -78,7 +86,7 @@ namespace Cyclo.Controllers
         // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,description,report,userID")] Job job)
+        public ActionResult Edit([Bind(Include = "ID,deadLine,name,description,report,userID")] Job job)
         {
             if (ModelState.IsValid)
             {

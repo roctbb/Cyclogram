@@ -54,10 +54,10 @@
                 @if (newRow)
                 {
                     newRow = false;
-                    <th rowspan="@count" style="white-space: nowrap;" class="vertical">@item.parent.name</th>
+                    <th rowspan="@count" style="background-color: white; white-space: nowrap;" class="vertical">@item.parent.name</th>
                 }
                 
-                <th style="white-space: nowrap;" class="vertical sub">@item.name</th>
+                <th style="background-color: white;white-space: nowrap;" class="vertical sub">@item.name</th>
                 @for (int i = 1; i <= ViewBag.weekNums; i++)
                 {
                     <td>
@@ -148,37 +148,3 @@
     data+='</ul>';
     $("#eventMenu").html(data);
 </script>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.startDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.endDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.description)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.startDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.endDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.description)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
-}
-
-</table>

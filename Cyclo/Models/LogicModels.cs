@@ -41,11 +41,21 @@ namespace Cyclo.Models
         public String description { get; set; }
         [DisplayName("Название события")]
         public String name { get; set; }
+        public List<Job> Jobs { get; set; }
+    }
+    public enum JobStatus
+    {
+        Pending, InProgress, Completed, Reported, Overdue
     }
     public class Job
     {
         public int ID { get; set; }
-        public Event inEvent {get;set;}
+        [DisplayName("Срок")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime deadLine { get; set; }
+        [DisplayName("Название")]
+        public String name { get; set; }
         [DisplayName("Постановка задачи")]
         [DataType(DataType.Html)]
         [AllowHtml]
@@ -57,6 +67,8 @@ namespace Cyclo.Models
         [UIHint("tinymce_full")]
         public String report { get; set; }
         public int userID { get; set; }
+        [DisplayName("Статус")]
+        public JobStatus status { get; set; }
     }
     public class CycloDBContext : DbContext
     {
