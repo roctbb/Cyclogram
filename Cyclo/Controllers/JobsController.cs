@@ -21,14 +21,15 @@ namespace Cyclo.Controllers
         }
 
         // GET: Jobs/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int? id, int? eid)
         {
-            if (id == null)
+            if (id == null || eid == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Job job = db.Jobs.Find(id);
-            if (job == null)
+            ViewBag.linkedEvent = db.events.Include(e => e.subCategory).Include(e => e.subCategory.parent).Where(e => e.ID == eid).FirstOrDefault();
+            if (job == null || ViewBag.linkedEvent == null)
             {
                 return HttpNotFound();
             }
@@ -36,10 +37,8 @@ namespace Cyclo.Controllers
         }
 
         // GET: Jobs/Create
-        public ActionResult Create(int eid, int m, int y)
+        public ActionResult Create(int eid)
         {
-            ViewBag.month = m;
-            ViewBag.year = y;
             ViewBag.linkedEvent = db.events.Where(e => e.ID == eid).First();
             return View();
         }
@@ -49,32 +48,32 @@ namespace Cyclo.Controllers
         // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int eid, int m, int y, [Bind(Include = "ID,deadLine,name,description,report,userID")] Job job)
+        public ActionResult Create(int eid, [Bind(Include = "ID,deadLine,name,description,report,userID")] Job job)
         {
-            ViewBag.month = m;
-            ViewBag.year = y;
-            Event current = db.events.Include(e=>e.Jobs).Where(e => e.ID == eid).First();
+            Event current = db.events.Include(e => e.Jobs).Where(e => e.ID == eid).First();
             ViewBag.linkedEvent = current;
             if (ModelState.IsValid)
             {
                 db.Jobs.Add(job);
                 current.Jobs.Add(job);
                 db.SaveChanges();
-                return RedirectToAction("Details", "Events", new {id=eid, m=m, y=y });
+                return RedirectToAction("Details", "Events", new { id = eid });
             }
 
             return View(job);
         }
 
         // GET: Jobs/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id, int? eid)
         {
-            if (id == null)
+
+            if (id == null || eid == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Job job = db.Jobs.Find(id);
-            if (job == null)
+            ViewBag.linkedEvent = db.events.Include(e => e.subCategory).Include(e => e.subCategory.parent).Where(e => e.ID == eid).FirstOrDefault();
+            if (job == null || ViewBag.linkedEvent == null)
             {
                 return HttpNotFound();
             }
@@ -86,21 +85,26 @@ namespace Cyclo.Controllers
         // сведения см. в статье http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,deadLine,name,description,report,userID")] Job job)
+        public ActionResult Edit(int? eid, [Bind(Include = "ID,deadLine,name,description,report,userID")] Job job)
         {
+            if (eid == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ViewBag.linkedEvent = db.events.Include(e => e.subCategory).Include(e => e.subCategory.parent).Where(e => e.ID == eid).FirstOrDefault();
             if (ModelState.IsValid)
             {
                 db.Entry(job).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = job.ID, eid = eid });
             }
             return View(job);
         }
 
         // GET: Jobs/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, int? eid)
         {
-            if (id == null)
+            if (id == null || eid==null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -109,7 +113,9 @@ namespace Cyclo.Controllers
             {
                 return HttpNotFound();
             }
-            return View(job);
+            db.Jobs.Remove(job);
+            db.SaveChanges();
+            return RedirectToAction("Details", "Events", new { id=eid});
         }
 
         // POST: Jobs/Delete/5

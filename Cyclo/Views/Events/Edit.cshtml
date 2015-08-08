@@ -8,7 +8,7 @@
 <h2>Изменение информации о событии</h2>
 
 
-<form method="post" action="/Events/Edit/?m=@ViewBag.month&y=@ViewBag.year">
+<form method="post" action="/Events/Edit/">
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
@@ -64,7 +64,7 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Сохранить" class="btn btn-success" />
-                <a href="/Events/Details/?id=@Model.ID&m=@ViewBag.month&y=@ViewBag.year" class="btn btn-default">Назад к описанию события</a>
+                <a href="/Events/Details/?id=@Model.ID" class="btn btn-default">Назад к описанию события</a>
             </div>
         </div>
     </div>

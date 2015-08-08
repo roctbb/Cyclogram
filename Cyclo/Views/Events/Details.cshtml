@@ -1,7 +1,7 @@
 ﻿@model Cyclo.Models.Event
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Описание мероприятия";
 }
 
 <h2 align="center">@Html.DisplayFor(model => model.name)</h2>
@@ -40,8 +40,8 @@
 
     </dl>
     <p>
-        @Html.ActionLink("Изменить информацию о событии", "Edit", new { id = Model.ID, m = ViewBag.month, y = ViewBag.year }, new {@class= "btn-sm btn btn-primary" })
-        @Html.ActionLink("Назад в списку событий", "Index", new { m=ViewBag.month, y=ViewBag.year}, new { @class = "btn btn-default btn-sm" })
+        @Html.ActionLink("Изменить информацию о событии", "Edit", new { id = Model.ID }, new {@class= "btn-sm btn btn-primary" })
+        @Html.ActionLink("Назад к списку событий", "Index", new { m=ViewBag.month, y=ViewBag.year}, new { @class = "btn btn-default btn-sm" })
     </p>
 
 </div>
@@ -59,8 +59,9 @@
                 <th>№</th>
                 <th>Название</th>
                 <th>Срок</th>
-                <th>Испольнитель</th>
+                <th>Исполнитель</th>
                 <th>Статус</th>
+                <th>Операции</th>
             </tr>
         </thead>
         <tbody>
@@ -71,17 +72,18 @@
             {
                 <tr>
                     <td>@i</td>
-                    <td>@job.name</td>
+                    <td><a href="/Jobs/Details/?id=@job.ID&eid=@Model.ID">@job.name</a></td>
                     <td>@job.deadLine.Date</td>
                     <td>@job.userID</td>
                     <td>@job.status</td>
+                    <td><span class="badge"><a style="color: white;" href="/Jobs/Delete/@job.ID?eid=@Model.ID"><span class="glyphicon glyphicon-trash"></span></a></span></td>
                 </tr> 
                 i=i+1;
                 
             }
         </tbody>
     </table>
-    <a href="/Jobs/Create/?eid=@Model.ID&m=@ViewBag.month&y=@ViewBag.year" class="btn btn-primary">Добавить задачу</a>
+    <a href="/Jobs/Create/?eid=@Model.ID" class="btn btn-primary">Добавить задачу</a>
 </div>
 <div>
 
