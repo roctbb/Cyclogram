@@ -10,6 +10,7 @@ using Cyclo.Models;
 
 namespace Cyclo.Controllers
 {
+    [Authorize]
     public class SubCategoriesController : Controller
     {
         private CycloDBContext db = new CycloDBContext();

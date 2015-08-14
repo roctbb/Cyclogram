@@ -1,4 +1,5 @@
 ﻿@model Cyclo.Models.Event
+@using Cyclo.Models
 
 @{
     ViewBag.Title = "Описание мероприятия";
@@ -72,9 +73,17 @@
             {
                 <tr>
                     <td>@i</td>
+                    @{ 
+                        var name = job.userID;
+                        var user = ((List<ApplicationUser>)ViewBag.users).Where(u => u.Id == job.userID).FirstOrDefault();
+                        if (user != null)
+                        {
+                            name = user.name;
+                        }
+                    }
                     <td><a href="/Jobs/Details/?id=@job.ID&eid=@Model.ID">@job.name</a></td>
                     <td>@job.deadLine.Date</td>
-                    <td>@job.userID</td>
+                    <td>@name</td>
                     <td>@job.status</td>
                     <td><span class="badge"><a style="color: white;" href="/Jobs/Delete/@job.ID?eid=@Model.ID"><span class="glyphicon glyphicon-trash"></span></a></span></td>
                 </tr> 

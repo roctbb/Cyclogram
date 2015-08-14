@@ -7,27 +7,50 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cyclo.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Cyclo.Controllers
 {
+    [Authorize]
     public class JobsController : Controller
     {
         private CycloDBContext db = new CycloDBContext();
+        private ApplicationDbContext userdb = new ApplicationDbContext();
 
         // GET: Jobs
         public ActionResult Index()
         {
-            return View(db.Jobs.ToList());
+            var id = User.Identity.GetUserId();
+            var tasks = db.Jobs.Where(t => t.userID == id).ToList();
+            db.events.Load();
+            db.Jobs.Load();
+            var events = new Dictionary<int, Event>();
+            var names = new Dictionary<int, String>();
+            foreach (var t in tasks)
+            {
+                var e = db.events.Where(ev => ev.Jobs.Any(j=>j.ID==t.ID)).First();
+                var n = userdb.Users.Where(u => u.Id == t.authorID).First();
+                events.Add(t.ID, e);
+                names.Add(t.ID, n.name);
+            }
+            ViewBag.eventList = events;
+            ViewBag.names = names;
+            return View(tasks);
         }
 
         // GET: Jobs/Details/5
-        public ActionResult Details(int? id, int? eid)
+        public ActionResult Details(int? id)
         {
-            if (id == null || eid == null)
+            
+            if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            db.Jobs.Load();
+            var eid = db.events.Where(ev => ev.Jobs.Any(j => j.ID == id)).First().ID;
             Job job = db.Jobs.Find(id);
+            ViewBag.userName = userdb.Users.Find(job.userID).name;
+            ViewBag.authorName = userdb.Users.Find(job.authorID).name;
             ViewBag.linkedEvent = db.events.Include(e => e.subCategory).Include(e => e.subCategory.parent).Where(e => e.ID == eid).FirstOrDefault();
             if (job == null || ViewBag.linkedEvent == null)
             {
@@ -35,11 +58,30 @@ namespace Cyclo.Controllers
             }
             return View(job);
         }
+        public ActionResult Report(int? id)
+        {
 
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            db.Jobs.Load();
+            var eid = db.events.Where(ev => ev.Jobs.Any(j => j.ID == id)).First().ID;
+            Job job = db.Jobs.Find(id);
+            ViewBag.userName = userdb.Users.Find(job.userID).name;
+            ViewBag.authorName = userdb.Users.Find(job.authorID).name;
+            ViewBag.linkedEvent = db.events.Include(e => e.subCategory).Include(e => e.subCategory.parent).Where(e => e.ID == eid).FirstOrDefault();
+            if (job == null || ViewBag.linkedEvent == null)
+            {
+                return HttpNotFound();
+            }
+            return View(job);
+        }
         // GET: Jobs/Create
         public ActionResult Create(int eid)
         {
             ViewBag.linkedEvent = db.events.Where(e => e.ID == eid).First();
+            ViewBag.usersList = userdb.Users.ToList();
             return View();
         }
 
@@ -50,7 +92,9 @@ namespace Cyclo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(int eid, [Bind(Include = "ID,deadLine,name,description,report,userID")] Job job)
         {
+            var id = User.Identity.GetUserId();
             Event current = db.events.Include(e => e.Jobs).Where(e => e.ID == eid).First();
+            job.authorID = id;
             ViewBag.linkedEvent = current;
             if (ModelState.IsValid)
             {

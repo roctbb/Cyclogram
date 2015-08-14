@@ -66,7 +66,10 @@ namespace Cyclo.Models
         [AllowHtml]
         [UIHint("tinymce_full")]
         public String report { get; set; }
-        public int userID { get; set; }
+        [DisplayName("Автор")]
+        public String authorID { get; set; }
+        [DisplayName("Исполнитель")]
+        public String userID { get; set; }
         [DisplayName("Статус")]
         public JobStatus status { get; set; }
     }

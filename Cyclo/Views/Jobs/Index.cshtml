@@ -4,11 +4,8 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Мои задачи</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -18,15 +15,17 @@
             @Html.DisplayNameFor(model => model.name)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.description)
+            Связанное событие
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.report)
+            Автор
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.userID)
+            @Html.DisplayNameFor(model => model.status)
         </th>
-        <th></th>
+        <th>
+            Операции
+        </th>
     </tr>
 
 @foreach (var item in Model) {
@@ -35,21 +34,21 @@
             @Html.DisplayFor(modelItem => item.deadLine)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.name)
+            <a href="/Jobs/Report/@item.ID">@Html.DisplayFor(modelItem => item.name)</a>
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.description)
+            <a href="/Events/Details/@ViewBag.eventList[item.ID].ID">@ViewBag.eventList[item.ID].name</a>
+        </td>m
+        <td>
+            @ViewBag.names[item.ID]
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.report)
+            @Html.DisplayFor(modelItem => item.status)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.userID)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ID })
         </td>
     </tr>
 }

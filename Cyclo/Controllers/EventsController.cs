@@ -11,9 +11,11 @@ using System.Globalization;
 
 namespace Cyclo.Controllers
 {
+    [Authorize]
     public class EventsController : Controller
     {
         private CycloDBContext db = new CycloDBContext();
+        private ApplicationDbContext userdb = new ApplicationDbContext();
 
         // GET: Events
         public ActionResult Index(int? m, int? y)
@@ -42,6 +44,7 @@ namespace Cyclo.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             db.categories.Load();
+            ViewBag.users = userdb.Users.ToList();
             Event @event = db.events.Include(e => e.subCategory).Include(e=>e.Jobs).Where(e => e.ID == id).First();
             ViewBag.month = @event.startDate.Month;
             ViewBag.year = @event.startDate.Year;

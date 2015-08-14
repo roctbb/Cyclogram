@@ -76,6 +76,6 @@
     <p>&nbsp;</p>
 </div>
 <div>
-    @Html.ActionLink("Изменить постановку задачи", "Edit", new { id = Model.ID, eid=((Event)ViewBag.linkedEvent).ID }, new { @class = "btn btn-primary" }) 
-    @Html.ActionLink("К описанию мероприятия", "Details", "Events", new {id= ViewBag.linkedEvent.ID }, new { @class="btn btn-default" })
+
+    @Html.ActionLink("К описанию события", "Details", "Events", new {id= ViewBag.linkedEvent.ID }, new { @class="btn btn-default" })
 </div>
