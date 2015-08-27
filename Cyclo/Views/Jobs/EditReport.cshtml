@@ -4,8 +4,12 @@
     ViewBag.Title = "Details";
 }
 
+
 <h2>Задача: @Model.name</h2>
 <p>&nbsp;</p>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
 <div>
     <dl class="dl-horizontal">
         <dt>
@@ -66,16 +70,22 @@
     </div>
     <h3>Отчет исполнителя</h3>
     <p>&nbsp;</p>
-    <div>
-        @Html.DisplayFor(model => model.report)
-        @if (Model.report == null || Model.report == "")
-        {
-            <p>Отчет пока не предоставлен</p>
-        }
+    <div class="form-group">
+        @Html.LabelFor(model => model.report, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.report, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.report, "", new { @class = "text-danger" })
+        </div>
     </div>
     <p>&nbsp;</p>
 </div>
-<div>
-    @Html.ActionLink("Редактировать отчет", "EditReport", new { id = Model.ID, eid = ((Event)ViewBag.linkedEvent).ID }, new { @class = "btn btn-primary" })
-    @Html.ActionLink("К описанию события", "Details", "Events", new {id= ViewBag.linkedEvent.ID }, new { @class="btn btn-default" })
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+        <a href="/Jobs/Report/@Model.ID?eid=@ViewBag.linkedEvent.ID" class="btn btn-default">Назад к описанию задачи</a>
+    </div>
 </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

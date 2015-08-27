@@ -41,7 +41,10 @@
 
     </dl>
     <p>
-        @Html.ActionLink("Изменить информацию о событии", "Edit", new { id = Model.ID }, new {@class= "btn-sm btn btn-primary" })
+        @if (ViewBag.edit == true)
+        {
+            @Html.ActionLink("Изменить информацию о событии", "Edit", new { id = Model.ID }, new { @class = "btn-sm btn btn-primary" })
+        }
         @Html.ActionLink("Назад к списку событий", "Index", new { m=ViewBag.month, y=ViewBag.year}, new { @class = "btn btn-default btn-sm" })
     </p>
 
@@ -62,7 +65,10 @@
                 <th>Срок</th>
                 <th>Исполнитель</th>
                 <th>Статус</th>
-                <th>Операции</th>
+                @if (ViewBag.edit == true)
+                {
+                    <th>Операции</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -85,14 +91,20 @@
                     <td>@job.deadLine.Date</td>
                     <td>@name</td>
                     <td>@job.status</td>
-                    <td><span class="badge"><a style="color: white;" href="/Jobs/Delete/@job.ID?eid=@Model.ID"><span class="glyphicon glyphicon-trash"></span></a></span></td>
+                    @if (ViewBag.edit == true)
+                    {
+                        <td><span class="badge"><a style="color: white;" href="/Jobs/Delete/@job.ID?eid=@Model.ID"><span class="glyphicon glyphicon-trash"></span></a></span></td>
+                    }
                 </tr> 
                 i=i+1;
                 
             }
         </tbody>
     </table>
-    <a href="/Jobs/Create/?eid=@Model.ID" class="btn btn-primary">Добавить задачу</a>
+    @if (ViewBag.edit == true)
+    {
+        <a href="/Jobs/Create/?eid=@Model.ID" class="btn btn-primary">Добавить задачу</a>
+    }
 </div>
 <div>
 

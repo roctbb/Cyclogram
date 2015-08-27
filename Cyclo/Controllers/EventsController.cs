@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Cyclo.Models;
 using System.Globalization;
+using Microsoft.AspNet.Identity;
 
 namespace Cyclo.Controllers
 {
@@ -22,7 +23,7 @@ namespace Cyclo.Controllers
         {
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             Calendar cal = dfi.Calendar;
-
+            ViewBag.rights = userdb.Users.Find(User.Identity.GetUserId()).Rights;
             DateTime currentDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
 
@@ -48,6 +49,15 @@ namespace Cyclo.Controllers
             Event @event = db.events.Include(e => e.subCategory).Include(e=>e.Jobs).Where(e => e.ID == id).First();
             ViewBag.month = @event.startDate.Month;
             ViewBag.year = @event.startDate.Year;
+            var rights = userdb.Users.Find(User.Identity.GetUserId()).Rights;
+            if (rights.Contains(@event.subCategory.ID))
+            {
+                ViewBag.edit = true;
+            }
+            else
+            {
+                ViewBag.edit = false;
+            }
             if (@event == null)
             {
                 return HttpNotFound();

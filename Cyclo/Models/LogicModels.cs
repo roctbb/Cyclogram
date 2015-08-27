@@ -73,6 +73,16 @@ namespace Cyclo.Models
         [DisplayName("Статус")]
         public JobStatus status { get; set; }
     }
+    public class EmailModel
+    {
+        public Job job { get; set; }
+
+        public string From { get; set; }
+
+        public string To { get; set; }
+
+        
+    }
     public class CycloDBContext : DbContext
     {
         public DbSet<Category> categories { get; set; }

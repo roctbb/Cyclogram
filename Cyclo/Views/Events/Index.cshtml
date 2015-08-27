@@ -72,7 +72,9 @@
                                 }
                             }
                         </ul>
-                        <a class="btn btn-sm btn-primary" href="/Events/Create/?cat=@item.ID&m=@currentDate.Month&y=@currentDate.Year&w=@i"><span class="glyphicon glyphicon-plus"></span> Добавить</a>
+                        @if (((double[])ViewBag.rights).Contains(item.ID)) {
+                            <a class="btn btn-sm btn-primary" href="/Events/Create/?cat=@item.ID&m=@currentDate.Month&y=@currentDate.Year&w=@i"><span class="glyphicon glyphicon-plus"></span></a>
+                        }
                     </td>
                 }
             </tr>

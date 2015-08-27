@@ -3,6 +3,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System.ComponentModel.DataAnnotations.Schema;
+using System;
+using System.Linq;
 
 namespace Cyclo.Models
 {
@@ -10,6 +13,22 @@ namespace Cyclo.Models
     public class ApplicationUser : IdentityUser
     {
         public string name { get; set; }
+        [NotMapped]
+        public double[] Rights
+        {
+            get
+            {
+                if (RightsData != "" && RightsData != null)
+                    return Array.ConvertAll(RightsData.Split(','), Double.Parse);
+                else return new double[0];
+            }
+            set
+            {
+                var _data = value;
+                RightsData = String.Join(",", _data.Select(p => p.ToString()).ToArray());
+            }
+        }
+        public string RightsData { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Обратите внимание, что authenticationType должен совпадать с типом, определенным в CookieAuthenticationOptions.AuthenticationType

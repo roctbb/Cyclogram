@@ -10,7 +10,6 @@ namespace Cyclo.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            ContextKey = "Cyclo.Models.CycloDBContext";
         }
 
         protected override void Seed(Cyclo.Models.CycloDBContext context)
