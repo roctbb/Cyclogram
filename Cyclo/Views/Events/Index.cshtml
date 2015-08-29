@@ -68,7 +68,14 @@
                                 if (Event.subCategory.ID == item.ID && (cal.GetWeekOfYear(currentDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) + i - 1 >= cal.GetWeekOfYear(Event.startDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek)) &&
                                     (cal.GetWeekOfYear(currentDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek) + i - 1 <= cal.GetWeekOfYear(Event.endDate, dfi.CalendarWeekRule, dfi.FirstDayOfWeek)))
                                 {
-                                    <li class="list-group-item"><span class="badge"><a style="color: white;" href="/Events/Delete/@Event.ID?m=@currentDate.Month&y=@currentDate.Year&w=@i"><span class=" glyphicon glyphicon-trash"></span></a></span><a href="/Events/Details/@Event.ID">@Event.name</a></li>
+                                    <li class="list-group-item">
+                                        @if (((double[])ViewBag.rights).Contains(item.ID))
+                                        {
+                                            <span class="badge">
+                                                <a style="color: white;" href="/Events/Delete/@Event.ID?m=@currentDate.Month&y=@currentDate.Year&w=@i"><span class=" glyphicon glyphicon-trash"></span></a>
+                                            </span>
+                                        }
+                                            <a href="/Events/Details/@Event.ID">@Event.name</a></li>
                                 }
                             }
                         </ul>

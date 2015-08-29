@@ -26,6 +26,7 @@ namespace Cyclo.Controllers
             db.Jobs.Load();
             var events = new Dictionary<int, Event>();
             var names = new Dictionary<int, String>();
+            if (tasks!=null)
             foreach (var t in tasks)
             {
                 var e = db.events.Where(ev => ev.Jobs.Any(j=>j.ID==t.ID)).First();

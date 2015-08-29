@@ -160,8 +160,12 @@ namespace Cyclo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Event @event = db.events.Find(id);
-
+            Event @event = db.events.Include(e=>e.Jobs).Where(e=>e.ID==id).First();
+            foreach (var j in @event.Jobs.ToList())
+            {
+                db.Jobs.Remove(j);
+            }
+            @event.Jobs.Clear();
             db.events.Remove(@event);
             db.SaveChanges();
             return RedirectToAction("Index", new {m=m,y=y});
